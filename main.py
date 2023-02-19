@@ -4,6 +4,19 @@ import json
 from bson.json_util import dumps
 from bson.objectid import ObjectId
 
+
+from transformers import pipeline
+from detoxify import Detoxify
+
+classifier = pipeline("zero-shot-classification",
+                      model="valhalla/distilbart-mnli-12-1")
+emotion_classifier = pipeline('sentiment-analysis', 
+                    model='joeddav/distilbert-base-uncased-go-emotions-student')
+
+candidate_labels = ['venting', 'suggestion', 'self harm','advice']
+
+
+
 app = Flask(__name__)
 
 connection_string = "mongodb+srv://arpanqx:arpan77@cluster0.iqoj2fz.mongodb.net/?retryWrites=true&w=majority"
@@ -24,10 +37,24 @@ def posting_vents():
     post_content = data['post_content']
    # time = data['time']
 
-    # Insert the data into the collection
-    result = collection.insert_one(data)
-    print(result)
-    return jsonify(1)
+
+    toxicity = Detoxify('unbiased').predict(post_content)
+
+
+    first_element_score = list(toxicity.values())[0] #get the most score 
+    first_element_name = list(toxicity.keys())[0] #get the most score 
+
+    if first_element_score > 0.80:
+        return_str = 'Cant post because of ' + first_element_name
+        return jsonify(return_str)
+
+    else:
+        emotion = emotion_classifier(post_content)
+        topics = classifier(post_content, candidate_labels)
+        post = {'username':username,'post_content':post_content, 'emotion':emotion[0]['label'],'topics':topics['labels'][0] }
+        # Insert the data into the collection
+        result = collection.insert_one(post)
+        return jsonify('Vent posted')
 
 @app.route('/vents', methods=['GET'])
 def getting_vents():
@@ -96,3 +123,8 @@ def updating_vents():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+# search
+# healer points
+# leader healers
