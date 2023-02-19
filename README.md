@@ -15,7 +15,7 @@ Introducing a Mental Wellness oriented Safe Space 'MY SANCTUARY' which is a clou
 
 ### How we're solving it: 
 As the name suggests, `My Sanctuary` creates a non-judgemental blog forum for users to vent out and resonate with like-minded peers. The platform incorporates several Machine Learning Models to achieve toxicity filters, sentiment analysis, emotion detection functions. 
-- The web app is developed in Python using the Flask framework. 
+- The web app is developed in Python using the Flask framework and MongoDB as the database. 
 - The conversational AI agent built using the Google Cloud subset Dialogflow, aims to be a passifier in case of need. Upon encountering a vulnerable state of mind of the user, the chatbot redirects the user to either the Mental Health Helplines or the EMergency contact given by them using Twilio . 
 - To maintain the non-judgemental aspect and privacy of the users, all usernames are randomly generated for the front end but the actual identity of the user is taken in at the time of registration for authentication purposes.
 - Every post given by a user is scanned using the ML algorithms for various safety parameters and if passes the checks, if displayed on the feed.
