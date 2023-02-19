@@ -13,7 +13,7 @@ classifier = pipeline("zero-shot-classification",
 emotion_classifier = pipeline('sentiment-analysis', 
                     model='joeddav/distilbert-base-uncased-go-emotions-student')
 
-candidate_labels = ['venting', 'suggestion', 'self harm','advice']
+candidate_labels = ['venting','suggestion','advice']
 
 
 
@@ -35,7 +35,7 @@ def posting_vents():
     data = request.json
     username = data['username']
     post_content = data['post_content']
-   # time = data['time']
+
 
 
     toxicity = Detoxify('unbiased').predict(post_content)
@@ -51,7 +51,15 @@ def posting_vents():
     else:
         emotion = emotion_classifier(post_content)
         topics = classifier(post_content, candidate_labels)
-        post = {'username':username,'post_content':post_content, 'emotion':emotion[0]['label'],'topics':topics['labels'][0] }
+        if (topics['labels'][0] == 'suggestion' or topics['labels'][0] == 'advice'):
+            try:
+                highest_score_particular_user = db.students.find_one(filter={"username": username}, sort=[("healer_score", pymongo.DESCENDING)])["score"]
+                healer_score = highest_score_particular_user
+                healer_score = healer_score + 1 
+            except:
+                healer_score = 4
+            
+        post = {'username':username,'post_content':post_content, 'like_count':0, 'healer_score':healer_score, 'emotion':emotion[0]['label'],'topics':topics['labels'][0] }
         # Insert the data into the collection
         result = collection.insert_one(post)
         return jsonify('Vent posted')
@@ -81,16 +89,29 @@ def updating_vents():
 
     like_up = data['like_up']
     comment_up = data['comment_up']
+    comment_like_up = data['comment_like_up']
+
+    if comment_up:
+        comment_username = data['comment_username']
+        comment_content = data['comment_content']
 
 
-    comment_username = data['comment_username']
-    comment_content = data['comment_content']
+    result_for_username = collection.find_one(filter={"_id": ObjectId(id)})
+    
+    username_for_id = result_for_username["username"]
+
+    result_for_username = collection.find_one(filter={"username": username_for_id})
+
+    like_count = result_for_username["like_count"]
+
+    highest_score_particular_user = collection.find_one(filter={"username": username_for_id}, sort=[("healer_score", pymongo.DESCENDING)])["healer_score"]
+    healer_score = highest_score_particular_user
 
 
-    if str(like_up) == '1':
+    if (str(like_up) == '1' and result_for_username["topics"] == 'suggestion'):
         like_count = int(like_count) + 1
-        like_count = data['like_count'] # only 1 
         like_username = data['like_username']
+        healer_score = healer_score + 4
     else:
         pass
 
@@ -99,6 +120,16 @@ def updating_vents():
         comment_content = data['comment_content']
     else:
         pass
+
+    if str(comment_like_up) == '1':
+        try:
+            comment_like_up = int(result_for_username['comment_like_up']) + 1
+            healer_score = healer_score + 4
+        except:
+            comment_like_up = 1
+    else:
+        pass
+
 
 
     filter = {'_id': ObjectId(id)}
@@ -111,7 +142,9 @@ def updating_vents():
         'like_count': like_count, 
         'like_username':like_username,
         'comment_username':comment_username,
-        'comment_content':comment_content
+        'comment_content':comment_content,
+        'healer_score' : healer_score,
+        'comment_like_up':comment_like_up
         }
     }
 
@@ -121,10 +154,30 @@ def updating_vents():
     print(result.matched_count)
     return jsonify(result.modified_count)
 
+
+@app.route('/healer-score', methods=['GET'])
+def healer():
+
+    username = request.args.get('username')
+    highest_score_particular_user = collection.find_one(filter={"username": username}, sort=[("healer_score", pymongo.DESCENDING)])["healer_score"]
+    healer_score = highest_score_particular_user
+
+    return jsonify(healer_score)
+
+@app.route('/leaderboard', methods=['GET'])
+def leaderboard():
+
+    max_score_dict_list = []
+    distinct_usernames = collection.distinct("username")
+    for username in distinct_usernames:
+        max_score = collection.find_one(filter={"username": username}, sort=[("healer_score", pymongo.DESCENDING)])["healer_score"]
+        max_score_dict = {username:max_score}
+        max_score_dict_list.append(max_score_dict) 
+    
+
+    sorted_list = sorted(max_score_dict_list, key=lambda x: list(x.values())[0], reverse=True)
+    return jsonify(sorted_list)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-# search
-# healer points
-# leader healers
