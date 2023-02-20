@@ -27,3 +27,11 @@ As the name suggests, `My Sanctuary` creates a non-judgemental blog forum for us
 3. Twilio
 4. Google Cloud Platform, Dialogflow
 5. Frontend: HTML, CSS, JS, Bootstrap
+
+
+## Try it yourself:
+
+Backend:
+1. run !pip3 install -r requirements.txt
+2. python main.py
+

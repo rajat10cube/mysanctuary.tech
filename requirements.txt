@@ -1,4 +1,5 @@
+torch
 flask
 pymongo
-detoxify==0.5.1
-transformers==4.22.1
+detoxify
+transformers

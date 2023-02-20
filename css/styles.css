@@ -1,0 +1,101 @@
+.title{
+	font-family: 'Source Sans Pro';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 26px;
+	line-height: 38px;
+	color: #FFF6C3;
+
+}
+.custom-nav{
+	position: fixed;
+	padding: 1vh;
+	top: 0;
+	width: 100%;
+}
+#post_title{
+	color: white;
+}
+.username-text{
+	color: white;
+	font-size: 1.1ch;
+	font-weight: bold;
+}
+.date-text{
+	color: #999;
+	font-size: 0.8ch;
+}
+.likes-text{
+	color: #999;
+	font-size: 1ch;
+}
+.comments-text{
+	color: #AAA;
+	font-size: 1ch;
+}
+.tag-text { 
+	background-color: #2C353D;
+	border-radius:20px;
+	padding: 4px 10px;
+	color:rgba(197.0000034570694, 208.0000028014183, 230.00000149011612, 1);
+	font-family:Source Sans Pro;
+	text-align:left;
+	font-size:10px;
+	letter-spacing:0;
+	line-height:px;
+	margin: 1% 1% 2% 0%;
+
+}
+.chatbot{
+	color: white;
+	position: fixed;
+	bottom: 2vh;
+	background-color: #262D34;
+	height: 55vh;
+	right: 2vw;
+	width: 19.5vw;
+}
+
+.healer-points-div{
+	background-color: #262D34;
+	right: 2vw;
+	padding: 1% 2% 0% 2%;
+	position: fixed;
+	height: 31vh;
+}
+.create-post-div{
+	background-color: #262D34;
+	padding: 2vh 1vh 2vh 1vh;
+	border-radius: 5px;
+	margin-bottom: 2vh;
+}
+.view-post-div{
+	background-color: #262D34;
+	padding: 2vh 1vh 2vh 1vh;
+	border-radius: 5px;
+	margin-bottom: 2vh;
+}
+.search-input{ 
+	box-shadow:0px 4px 4px rgba(0, 0, 0, 0.25);
+	background-color: #2C353D;
+	color: white;
+	border: 0px;
+	height: 'auto';
+	min-width:30%;
+	max-width:100%;
+}
+.search-input::placeholder {
+	color: #888;
+	opacity: 1; /* Firefox */
+  }
+.user-image { 
+	border-radius:500px;
+	background-color:rgba(240.00000089406967, 241.00000083446503, 254.00000005960464, 1);
+}
+.create-post-btn { 
+	background-color:rgba(229.00000154972076, 186.0000041127205, 115.00000074505806, 1);
+	border-radius:6px;
+	padding: 10%;
+	color: white;
+	font-size: small;
+}
